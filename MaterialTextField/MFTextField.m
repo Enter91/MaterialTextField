@@ -73,7 +73,9 @@ static NSTimeInterval const MFDefaultAnimationDuration = 0.3;
 
 - (void)setDefaults
 {
-    self.textPadding = CGSizeMake(0.0f, 8.0f);
+    self.textPadding = 0.0f;
+    self.topPadding = 8.0f;
+    self.bottomPadding = 8.0f;
     self.errorPadding = CGSizeMake(0.0f, 4.0f);
 
     self.animatesPlaceholder = YES;
@@ -136,9 +138,9 @@ static NSTimeInterval const MFDefaultAnimationDuration = 0.3;
     self.placeholderLabelTopConstraint = [self.placeholderLabel.topAnchor constraintEqualToAnchor:self.topAnchor];
     
     NSLayoutConstraint *leading = [self.placeholderLabel.leadingAnchor constraintEqualToAnchor:self.leadingAnchor
-                                                                                      constant:self.textPadding.width];
+                                                                                      constant:self.textPadding];
     NSLayoutConstraint *trailing = [self.trailingAnchor constraintEqualToAnchor:self.placeholderLabel.trailingAnchor
-                                                                       constant:self.textPadding.width];
+                                                                       constant:self.textPadding];
     self.placeholderLabelHorizontalConstraints = @[leading, trailing];
 
     [NSLayoutConstraint activateConstraints:@[self.placeholderLabelTopConstraint, leading, trailing]];
@@ -165,16 +167,28 @@ static NSTimeInterval const MFDefaultAnimationDuration = 0.3;
     
 #pragma mark Padding
     
-- (void)setTextPadding:(CGSize)textPadding
+- (void)setTextPadding:(CGFloat)textPadding
 {
     _textPadding = textPadding;
     [self updatePlaceholderHorizontalConstraints];
+}
+
+- (void)setTopPadding:(CGFloat)topPadding
+{
+    _topPadding = topPadding;
+    [self layoutIfNeeded];
+}
+
+- (void)setBottomPadding:(CGFloat)bottomPadding
+{
+    _bottomPadding = bottomPadding;
+    [self layoutIfNeeded];
 }
     
 - (void)updatePlaceholderHorizontalConstraints
 {
     for (NSLayoutConstraint *constraint in self.placeholderLabelHorizontalConstraints) {
-        constraint.constant = self.textPadding.width;
+        constraint.constant = self.textPadding;
     }
 }
     
@@ -372,7 +386,7 @@ static NSTimeInterval const MFDefaultAnimationDuration = 0.3;
 - (void)updateUnderlineFrame
 {
     CGFloat underlineHeight = self.isFirstResponder ? self.underlineEditingHeight : self.underlineHeight;
-    CGFloat yPos = CGRectGetMaxY(self.textRect) + self.textPadding.height - underlineHeight;
+    CGFloat yPos = CGRectGetMaxY(self.textRect) + self.bottomPadding - underlineHeight;
 
     self.underlineLayer.frame = CGRectMake(0, yPos, CGRectGetWidth(self.bounds), underlineHeight);
 
@@ -649,8 +663,8 @@ static NSTimeInterval const MFDefaultAnimationDuration = 0.3;
     BOOL hasLeftView = [self leftViewRectForBounds:bounds].size.width > 0;
     BOOL hasRightView = [self rightViewRectForBounds:bounds].size.width > 0;
     
-    CGFloat leftPadding = hasLeftView ? 0 : self.textPadding.width;
-    CGFloat rightPadding = hasRightView ? rightRect.size.width : self.textPadding.width * 2;
+    CGFloat leftPadding = hasLeftView ? 0 : self.textPadding;
+    CGFloat rightPadding = hasRightView ? rightRect.size.width : self.textPadding * 2;
     
     CGRect rect = CGRectMake(superRect.origin.x + leftPadding,
                              [self adjustedYPositionForTextRect],
@@ -662,7 +676,7 @@ static NSTimeInterval const MFDefaultAnimationDuration = 0.3;
 
 - (CGFloat)adjustedYPositionForTextRect
 {
-    CGFloat top = ceil(self.textPadding.height);
+    CGFloat top = ceil(self.topPadding);
     if (self.animatesPlaceholder) {
         top += self.placeholderFont.lineHeight;
     }
@@ -690,7 +704,7 @@ static NSTimeInterval const MFDefaultAnimationDuration = 0.3;
 - (CGRect)rightViewRectForBounds:(CGRect)bounds
 {
     CGRect rightViewRect = [super rightViewRectForBounds:bounds];
-    rightViewRect.origin.x = rightViewRect.origin.x - self.textPadding.width;
+    rightViewRect.origin.x = rightViewRect.origin.x - self.textPadding;
     rightViewRect.origin.y = CGRectGetMidY(_textRect) - (rightViewRect.size.height / 2.0f);
     
     return rightViewRect;
@@ -699,7 +713,7 @@ static NSTimeInterval const MFDefaultAnimationDuration = 0.3;
 - (CGRect)leftViewRectForBounds:(CGRect)bounds
 {
     CGRect leftViewRect = [super leftViewRectForBounds:bounds];
-    leftViewRect.origin.x = self.textPadding.width;
+    leftViewRect.origin.x = self.textPadding;
     leftViewRect.origin.y = CGRectGetMidY(_textRect) - (leftViewRect.size.height / 2.0f);
     
     return leftViewRect;

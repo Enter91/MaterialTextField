@@ -12,10 +12,21 @@ IB_DESIGNABLE
 @interface MFTextField : UITextField
 
 /**
- * textPadding.height: Padding above and below the text field, between the placeholder label and underline.
- * textPadding.width:  Horizontal padding on the left and right of the text field.
+ * Horizontal padding on the left and right of the text field.
  */
-@property (nonatomic) IBInspectable CGSize textPadding;
+@property (nonatomic) IBInspectable CGFloat textPadding;
+
+/**
+ * Padding above the text field, between the placeholder label.
+ * Default is 8.0.
+ */
+@property (nonatomic) IBInspectable CGFloat topPadding;
+
+/**
+ * Padding below the text field, between the underline.
+ * Default is 8.0.
+ */
+@property (nonatomic) IBInspectable CGFloat bottomPadding;
 
 /**
  * Animate placeholder label above text field on focus or input (see placeholderAnimatesOnFocus).
